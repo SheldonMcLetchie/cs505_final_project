@@ -6,7 +6,7 @@ import time
 def launch_web_api():
     app = Flask(__name__)
 
-    @app.route('/')
+    @app.route('/trial')
     def get_status():
         #query
         start_time = time.time()
