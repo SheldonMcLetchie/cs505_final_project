@@ -1,1 +1,1 @@
-docker build . -t cs505_helloworld
+docker build . -t cs505_final_web
