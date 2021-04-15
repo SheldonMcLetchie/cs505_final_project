@@ -12,6 +12,9 @@ I. Git
 3. make sure code works on branch before pushing to main. 
 
 #Docker images
+Run the web container
+sudo docker run -p 9000:9000 -it cs505_final_project
+
 
 1. Set-up reference "Working with Graph Databases" and "My CEP" for the two databases and "exposing services in a custom container" for the webconnection.
 
