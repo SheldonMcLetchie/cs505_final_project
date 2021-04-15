@@ -1,0 +1,11 @@
+version: '3'
+
+services: 
+  web:
+    image: python
+    ports:
+        - "8080:9000"
+  orientdb :
+    image: orientdb:2.2
+    environment: 
+      - ORIENTDB_ROOT_PASSWORD=rootpwd
