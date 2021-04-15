@@ -1,6 +1,7 @@
-FROM Nginx:latest
-
-RUN apt-get update && apt-get install -y git\
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /usr/share/nginx/html
+FROM python:latest
+RUN pip install flask
+ADD main.py /cs505/main.py
+WORKDIR /cs505
+EXPOSE 9000
+CMD ["main.py"]
+ENTRYPOINT ["python"]

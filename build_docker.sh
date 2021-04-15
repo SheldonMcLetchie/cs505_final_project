@@ -1,0 +1,1 @@
+docker build . -t cs505_helloworld
