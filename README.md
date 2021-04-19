@@ -11,6 +11,44 @@ I. Git
 
 3. make sure code works on branch before pushing to main. 
 
+II. Install rabbitmq (not 100% sure this is required)
+Detailed directions:
+https://www.rabbitmq.com/install-debian.html#erlang-repositories
+
+Quick directions:
+
+1. sudo apt-get update -y
+
+2. sudo apt-get install curl gnupg debian-keyring debian-archive-keyring -y
+
+3. curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | sudo apt-key add -
+
+4. sudo apt-key adv --keyserver "keyserver.ubuntu.com" --recv-keys "F77F1EDA57EBB1CC"
+
+5. sudo apt-get install apt-transport-https
+
+<!-- I didn't do 6 or 7 and still got output -->
+6. deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu focal main
+
+7. deb-src http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu focal main
+<!-- end of note -->
+
+8. sudo apt-get update -y
+
+9. sudo apt-get install -y erlang-base \
+                        erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+                        erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+                        erlang-runtime-tools erlang-snmp erlang-ssl \
+                        erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
+
+III. Install pika and Subscriber.py
+
+sudo pip3 install pika
+
+python3 Subsriber.py
+
+-- you should see output from the subscriber. It does not need to be in any kind of webserver.
+
 #Docker images
 Run the web container
 sudo docker run -p 9000:9000 -it cs505_final_project
@@ -23,6 +61,4 @@ sudo docker run -p 9000:9000 -it cs505_final_project
     rabbitmq:latest
     Nginx - webserver
 
-3. To launch docker on webserver 
 
-docker run -it --rm -d -p 8080:80 --name web -v ~/site-content:/usr/share/nginx/html nginx
