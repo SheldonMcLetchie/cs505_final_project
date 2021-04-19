@@ -28,12 +28,13 @@ def launch_web_api():
         #encode and respond
         return json.dumps(responce)
 
-    return app
-
+    #resets the database
     @app.route('/reset')
     def db_reset():
-        print('I was not reset')
-
+        message ="I was not reset"
+        return json.dumps(message)
+        
+    return app
 if __name__ == '__main__':
     #listen on all interfaces on port 9000
     launch_web_api().run(host='0.0.0.0', port=9000)
