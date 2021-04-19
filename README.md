@@ -35,13 +35,15 @@ Quick directions:
 
 8. sudo apt-get update -y
 
-9.'''
+9.
+
+```
   sudo apt-get install -y erlang-base \
                         erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
                         erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
                         erlang-runtime-tools erlang-snmp erlang-ssl \
                         erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
-'''
+```
 III. Install pika and Subscriber.py
 
 sudo pip3 install pika
