@@ -27,11 +27,11 @@ Quick directions:
 
 5. ```sudo apt-get install apt-transport-https```
 
-<!-- I didn't do 6 or 7 and still got output -->
+Note: I didn't do 6 or 7 and still got output
 6. ```deb http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu focal main```
 
 7. ```deb-src http://ppa.launchpad.net/rabbitmq/rabbitmq-erlang/ubuntu focal main```
-<!-- end of note -->
+end of note 
 
 8. ```sudo apt-get update -y```
 
