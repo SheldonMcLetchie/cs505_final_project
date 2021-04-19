@@ -4,6 +4,9 @@ import socket
 import time
 
 def launch_web_api():
+    # launch Database
+
+    # launch web application
     app = Flask(__name__)
 
     @app.route('/trial')
@@ -25,9 +28,13 @@ def launch_web_api():
         #encode and respond
         return json.dumps(responce)
 
-
+    #resets the database
+    @app.route('/reset')
+    def db_reset():
+        message ="I was not reset"
+        return json.dumps(message)
+        
     return app
-
 if __name__ == '__main__':
     #listen on all interfaces on port 9000
     launch_web_api().run(host='0.0.0.0', port=9000)
