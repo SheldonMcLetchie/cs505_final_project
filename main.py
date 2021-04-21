@@ -2,10 +2,13 @@ import json
 from flask import Flask
 import socket
 import time
+import lib_sheldon.py
+
 
 def launch_web_api():
     # launch Database
-
+    create_db()
+    client=connect_db()
     # launch web application
     app = Flask(__name__)
 

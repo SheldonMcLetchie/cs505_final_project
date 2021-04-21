@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 import pika
 import sys
+import ../db_connect.py
+import json
+
+#connect to the orientdb
+client=db_connect()
+dbname = "local"
 
 # Set the connection parameters to connect to rabbit-server1 on port 5672
 # on the / virtual host using the username "guest" and password "guest"
@@ -41,6 +47,12 @@ print(' [*] Waiting for logs. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
     print(" [x] %r:%r" % (method.routing_key, body))
+    #send data to database
+    client.command(
+        "INSERT INTO " + dbname +
+        "CONTENT " + body
+    )
+
 
 
 channel.basic_consume(
