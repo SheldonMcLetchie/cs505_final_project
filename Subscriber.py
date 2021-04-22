@@ -4,7 +4,7 @@ import sys
 import json
 import pyorient
 from connect_db import connect_db
-
+from lib_sheldon import close_brackets
 
 #connect to the orientdb
 client=connect_db()
@@ -48,8 +48,22 @@ print(' [*] Waiting for logs. To exit press CTRL+C')
 
 
 def callback(ch, method, properties, body):
+    print("----------------------------------------------")
+    print()
     print(" [x] %r:%r" % (method.routing_key, body))
+    print("-----------------------------------------------")
+    print()
+
     #send data to database
+    json_str = str(body)[1:]
+    json_str = json_str.replace('\'','').replace('[','').replace(']','')
+
+    patients = json_str.split("},")
+    patients = [x.close_brackets() for x in patients]
+    print(patients)
+    client.command(
+        "INSERT INTO Patient CONTENT " + json_str
+    )
 
 
 

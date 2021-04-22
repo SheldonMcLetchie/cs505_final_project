@@ -35,3 +35,6 @@ def create_db():
 
     #add other classes
     client.close()
+
+def close_brackets(str):
+    return str+"}"
