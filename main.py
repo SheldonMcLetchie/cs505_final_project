@@ -2,7 +2,8 @@ import json
 from flask import Flask
 import socket
 import time
-import lib_sheldon.py
+from lib_sheldon import create_db
+from connect_db import connect_db
 
 
 def launch_web_api():
