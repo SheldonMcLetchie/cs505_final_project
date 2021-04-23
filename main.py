@@ -2,7 +2,7 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import create_db
+from lib_sheldon import create_db, listclasses
 from connect_db import connect_db
 
 
@@ -37,8 +37,14 @@ def launch_web_api():
     def db_reset():
         message ="I was not reset"
         return json.dumps(message)
-        
+    
+    @app.route('/local_listclasses')
+    def local_listclasses():
+        return listclasses(client)
+  
     return app
+
+
 if __name__ == '__main__':
     #listen on all interfaces on port 9000
     launch_web_api().run(host='0.0.0.0', port=9000)

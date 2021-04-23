@@ -38,3 +38,6 @@ def create_db():
 
 def close_brackets(str):
     return str+"}"
+
+def listclasses(client):
+    client.command("LIST CLASSES")
