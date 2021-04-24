@@ -2,6 +2,18 @@
 This is the repo for the cs505 project
 
 
+#Running project
+1. Start orientdb container
+
+docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb:2.2
+
+2. start main.py (starts the web api)
+Python3 main.py
+
+3. start Subscriber.py
+Python3 Subscriber.py
+
+
 #Set up
 I. Git
 1. sudo git clone https://github.com/SheldonMcLetchie/cs505_final_project.git
@@ -45,25 +57,15 @@ end of note
                         erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
                         erlang-runtime-tools erlang-snmp erlang-ssl \
                         erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
-```
-III. Install pika and Subscriber.py
+
+
+III. Install pika (for rabbitmq) 
+
 
 sudo pip3 install pika
 
-python3 Subsriber.py
+IV. Install pysiddhi
 
--- you should see output from the subscriber. It does not need to be in any kind of webserver.
-
-#Docker images
-Run the web container
-sudo docker run -p 9000:9000 -it cs505_final_project
-
-
-1. Set-up reference "Working with Graph Databases" and "My CEP" for the two databases and "exposing services in a custom container" for the webconnection.
-
-2. Docker images required:
-    orientdb:2.2
-    rabbitmq:latest
-    Nginx - webserver
+sudo pip3 install pysiddhi
 
 
