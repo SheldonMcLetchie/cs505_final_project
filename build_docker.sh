@@ -1,1 +1,0 @@
-docker build . -t cs505_final_web
