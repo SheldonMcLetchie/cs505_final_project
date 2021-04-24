@@ -38,9 +38,9 @@ def launch_web_api():
         message ="I was not reset"
         return json.dumps(message)
     
-    @app.route('/local_listclasses')
-    def local_listclasses():
-        return listclasses(client)
+    @app.route('/local_dumpdata')
+    def dumpdata():
+        return dump_db(client)
   
     return app
 

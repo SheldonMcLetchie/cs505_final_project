@@ -48,20 +48,20 @@ print(' [*] Waiting for logs. To exit press CTRL+C')
 
 
 def callback(ch, method, properties, body):
+    print(str(body))
+    print()
+    #send data to database 
+    data = json.loads(str(body)[1:])
 
- 
-
-    #send data to database
-    json_str = str(body)[1:]
-    json_str = json_str.replace('\'','').replace('[','').replace(']','')
-    patients = json_str.split("},")
-    patients = [close_brackets(x) for x in patients[:-1]]
+    #json_str = json_str.replace('\'','').replace('[','').replace(']','')
+    #patients = json_str.split("},")
+    #patients = [close_brackets(x) for x in patients[:-1]]
 
     print("-----------------------------------------------")
     print()
-    print(patients)
-    
-    for patient in patients:
+    print(data)
+    print("****************************************")
+    for patient in data:
         client.command(
             "INSERT INTO Patient CONTENT " + patient
         )
