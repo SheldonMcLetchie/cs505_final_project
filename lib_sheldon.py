@@ -28,7 +28,7 @@ def create_db():
     client.command("CREATE CLASS Patient extends V")
     client.command("CREATE PROPERTY Patient.first_name String")
     client.command("CREATE PROPERTY Patient.last_name String")
-    client.command("CREATE PROPERTY Patient.last_mrn String")
+    client.command("CREATE PROPERTY Patient.mrn String")
     client.command("CREATE PROPERTY Patient.zipcode Integer")
     client.command("CREATE PROPERTY Patient.patient_status_code Integer")
 
@@ -40,4 +40,6 @@ def close_brackets(str):
     return str+"}"
 
 def dump_db(client):
-    client.command("SELECT FROM disk")
+    data = client.query("SELECT FROM Patient")
+    return ''.join(str(x) for x in data)
+    

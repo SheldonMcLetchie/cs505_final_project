@@ -2,7 +2,7 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import create_db, listclasses
+from lib_sheldon import create_db, dump_db
 from connect_db import connect_db
 
 
@@ -41,6 +41,7 @@ def launch_web_api():
     @app.route('/local_dumpdata')
     def dumpdata():
         return dump_db(client)
+        
   
     return app
 

@@ -46,24 +46,14 @@ for binding_key in binding_keys:
 
 print(' [*] Waiting for logs. To exit press CTRL+C')
 
-
 def callback(ch, method, properties, body):
-    print(str(body))
-    print()
     #send data to database 
-    data = json.loads(str(body)[1:])
-
-    #json_str = json_str.replace('\'','').replace('[','').replace(']','')
-    #patients = json_str.split("},")
-    #patients = [close_brackets(x) for x in patients[:-1]]
-
-    print("-----------------------------------------------")
-    print()
-    print(data)
-    print("****************************************")
+    data = json.loads(body.decode("utf-8"))
     for patient in data:
+        print("*****************************************")
+        print(patient)
         client.command(
-            "INSERT INTO Patient CONTENT " + patient
+            "INSERT INTO Patient CONTENT " + str(patient)
         )
 
 
