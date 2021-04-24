@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 import pika
 import sys
+import json
+import pyorient
+from connect_db import connect_db
+from lib_sheldon import close_brackets
+
+#connect to the orientdb
+client=connect_db()
+dbname = "local"
 
 # Set the connection parameters to connect to rabbit-server1 on port 5672
 # on the / virtual host using the username "guest" and password "guest"
@@ -38,9 +46,19 @@ for binding_key in binding_keys:
 
 print(' [*] Waiting for logs. To exit press CTRL+C')
 
-
 def callback(ch, method, properties, body):
-    print(" [x] %r:%r" % (method.routing_key, body))
+    #send data to database 
+    data = json.loads(body.decode("utf-8"))
+    for patient in data:
+        print("*****************************************")
+        print(patient)
+        client.command(
+            "INSERT INTO Patient CONTENT " + str(patient)
+        )
+
+
+
+
 
 
 channel.basic_consume(
