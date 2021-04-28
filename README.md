@@ -64,9 +64,24 @@ III. Install pika (for rabbitmq)
 
 sudo pip3 install pika
 
+IV. get pysiddhi container
+https://siddhi.io/en/v5.0/docs/siddhi-as-a-docker-microservice/#running-siddhi-app
+
+1. ```docker pull siddhiio/siddhi-runner-alpine:latest```
+
+2.```docker run -it -p 8006:8006 -v <local-absolute-siddhi-file-path>/CountOverTime.siddhi:/apps/CountOverTime.siddhi siddhiio/siddhi-runner-alpine -Dapps=/apps/CountOverTime.siddhi```
+
+<!-- 
+Example of adding data to the stream
+
+curl -X POST http://localhost:8006/production --header "Content-Type:application/json" -d "{\"event\":{\"name\":\"Cake\",\"amount\":20.12}}"
+
+ -->
+
+<!-- 
 IV. Install pysiddhi (https://siddhi.io/en/v5.1/docs/examples/)
 
 sudo pip3 install pysiddhi
-
+-->
 
 

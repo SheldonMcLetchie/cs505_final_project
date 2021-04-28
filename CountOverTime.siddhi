@@ -1,0 +1,15 @@
+@App:name('CountOverTime')
+@App:description('Receive events via HTTP, and logs the number of events received during last 15 seconds')
+
+@source(type = 'http', receiver.url = "http://0.0.0.0:8006/production",
+    @map(type = 'json'))
+define stream ProductionStream (name string, amount double);
+
+@sink(type = 'log')
+define stream TotalCountStream (totalCount long);
+
+-- Count the incoming events
+@info(name = 'query1')
+from ProductionStream#window.time(1 sec)
+select count() as totalCount 
+insert into TotalCountStream;
