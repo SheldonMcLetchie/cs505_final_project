@@ -2,22 +2,14 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import create_db, dump_db, load_hospital, load_kydist, dump_row_count
+from lib_sheldon import dump_db, dump_row_count
 from connect_db import connect_db
 
 
 def launch_web_api():
-    # launch Database
-    create_db()
+    # launch Database   
     client=connect_db()
 
-    # load data
-    hospital_file="hospitals.csv"
-    load_hospital(client,hospital_file)
-
-    #takes 12 mins to load. Need script to make kyzipdistance smaller
-    kydist_file = "kyzipdistance.csv"
-    load_kydist(client,kydist_file)
     # launch web application
     app = Flask(__name__)  
 
