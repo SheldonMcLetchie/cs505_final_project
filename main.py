@@ -2,7 +2,7 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import dump_db, dump_row_count
+from lib_sheldon import dump_db, dump_row_count, reset_patient
 from connect_db import connect_db
 
 
@@ -44,7 +44,12 @@ def launch_web_api():
     @app.route('/kydist_count')
     def kydist_dump():
         return dump_row_count(client,"kyzipdistance")
+    
     # project APIs
+    @app.route('/api/reset')
+    def reset():
+        return reset_patient(client)
+
     return app
 
 

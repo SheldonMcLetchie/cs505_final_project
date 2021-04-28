@@ -81,4 +81,19 @@ def load_kydist(client,kydist_file):
             insert_values = json.dumps(row)
             print(insert_values)
             client.command("INSERT INTO kyzipdistance CONTENT " + insert_values)
-     
+
+def reset_patient(client):
+    reset_status_code = dict()
+    reset_status_code["reset_status_code"] = 0
+    
+    query = "DELETE VERTEX Patient"
+    client.command(query)
+    
+    #try:
+    #    client.command(query)
+    #except pyorient.exceptions:
+    #    return json.dumps(reset_status_code)
+    
+    reset_status_code["reset_status_code"] = 1
+
+    return json.dumps(reset_status_code)
