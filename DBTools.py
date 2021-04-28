@@ -41,13 +41,13 @@ def loadDB(filepath):
     #open the database we are interested in
     client.db_open(dbname, login, password)
 
-    client.command("CREATE CLASS Hospital EXTENDS V")
+    client.command("CREATE CLASS Hospitals EXTENDS V")
 
-    client.command("CREATE PROPERTY Hospital.zip_from String")
+    client.command("CREATE PROPERTY Hospitals.zip_from String")
     #name
-    client.command("CREATE PROPERTY Hospital.zip_to String")
+    client.command("CREATE PROPERTY Hospitals.zip_to String")
     #id
-    client.command("CREATE PROPERTY Hospital.distance Integer")
+    client.command("CREATE PROPERTY Hospitals.distance Integer")
 
     #open and parse local json file
     with open(filepath) as f:
