@@ -1,4 +1,5 @@
 from lib_sheldon import create_db, load_hospital, load_kydist
+from connect_db import connect_db
 
 create_db()
 client=connect_db()
