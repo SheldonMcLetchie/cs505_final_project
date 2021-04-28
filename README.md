@@ -64,8 +64,9 @@ III. Install pika (for rabbitmq)
 
 sudo pip3 install pika
 
-IV. Install pysiddhi
+IV. Install pysiddhi (https://siddhi.io/en/v5.1/docs/examples/)
 
 sudo pip3 install pysiddhi
+
 
 

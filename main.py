@@ -1,21 +1,20 @@
-
-
 import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import create_db, dump_db
+from lib_sheldon import dump_db, dump_row_count, reset_patient
 from connect_db import connect_db
 
 
 def launch_web_api():
-    # launch Database
-    create_db()
+    # launch Database   
     client=connect_db()
-    # launch web application
-    app = Flask(__name__)
 
-    @app.route('/trial')
+    # launch web application
+    app = Flask(__name__)  
+
+    # testing APIs
+    @app.route('/test')
     def get_status():
         #query
         start_time = time.time()
@@ -33,18 +32,24 @@ def launch_web_api():
 
         #encode and respond
         return json.dumps(responce)
-
-    #resets the database
-    @app.route('/reset')
-    def db_reset():
-        message ="I was not reset"
-        return json.dumps(message)
     
-    @app.route('/local_dumpdata')
-    def dumpdata():
-        return dump_db(client)
-        
-  
+    @app.route('/patient_dumpdata')
+    def patient_dump():
+        return dump_db(client,"Patient")
+    
+    @app.route('/hospital_dumpdata')
+    def hospital_dump():
+        return dump_db(client,"Hospital")
+
+    @app.route('/kydist_count')
+    def kydist_dump():
+        return dump_row_count(client,"kyzipdistance")
+    
+    # project APIs
+    @app.route('/api/reset')
+    def reset():
+        return reset_patient(client)
+
     return app
 
 

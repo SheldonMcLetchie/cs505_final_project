@@ -1,14 +1,24 @@
 #!/usr/bin/env python
+import pyorient
 import pika
 import sys
 import json
-import pyorient
+#import pysiddhi
+from time import sleep
 from connect_db import connect_db
 from lib_sheldon import close_brackets
 
-#connect to the orientdb
+
+
+#set up data storage
+
 client=connect_db()
-dbname = "local"
+
+#siddhiManager = SiddhiManager()
+
+#siddhiApp = "define stream patientStream (zipcode int, patient_status_code int);" + \
+#    "@info(name = 'incoming')" + \
+#    "from patientStream"
 
 # Set the connection parameters to connect to rabbit-server1 on port 5672
 # on the / virtual host using the username "guest" and password "guest"
@@ -55,10 +65,6 @@ def callback(ch, method, properties, body):
         client.command(
             "INSERT INTO Patient CONTENT " + str(patient)
         )
-
-
-
-
 
 
 channel.basic_consume(
