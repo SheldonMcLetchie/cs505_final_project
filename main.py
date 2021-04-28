@@ -1,5 +1,3 @@
-
-
 import json
 from flask import Flask
 import socket
@@ -42,9 +40,10 @@ def launch_web_api():
     
     @app.route('/local_dumpdata')
     def dumpdata():
-        return dump_db(client)
-        
-  
+        return dump_db(client,"Patient")
+    
+    
+    
     return app
 
 

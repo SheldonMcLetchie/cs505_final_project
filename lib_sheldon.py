@@ -39,7 +39,8 @@ def create_db():
 def close_brackets(str):
     return str+"}"
 
-def dump_db(client):
-    data = client.query("SELECT FROM Patient")
+def dump_db(client,className):
+    query = "SELECT FROM " + className
+    data = client.query(query)
     return ''.join(str(x) for x in data)
     
