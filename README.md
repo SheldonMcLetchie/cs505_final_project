@@ -69,7 +69,9 @@ https://siddhi.io/en/v5.0/docs/siddhi-as-a-docker-microservice/#running-siddhi-a
 
 1. ```docker pull siddhiio/siddhi-runner-alpine:latest```
 
-2.```docker run -it -p 8006:8006 -v <local-absolute-siddhi-file-path>/CountOverTime.siddhi:/apps/CountOverTime.siddhi siddhiio/siddhi-runner-alpine -Dapps=/apps/CountOverTime.siddhi```
+2. run the following in the project directory
+
+```docker run -it -p 8006:8006 -v $PWD/CountOverTime.siddhi:/apps/CountOverTime.siddhi siddhiio/siddhi-runner-alpine -Dapps="/apps/CountOverTime.siddhi"```
 
 <!-- 
 Example of adding data to the stream
