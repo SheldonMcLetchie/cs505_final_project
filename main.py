@@ -14,7 +14,7 @@ def launch_web_api():
     app = Flask(__name__)  
 
     # testing APIs
-    @app.route('/test')
+    @app.route('/test/')
     def get_status():
         #query
         start_time = time.time()
@@ -32,7 +32,8 @@ def launch_web_api():
 
         #encode and respond
         return json.dumps(responce)
-    
+
+
     @app.route('/patient_dumpdata')
     def patient_dump():
         return dump_db(client,"Patient")
@@ -44,13 +45,34 @@ def launch_web_api():
     @app.route('/kydist_count')
     def kydist_dump():
         return dump_row_count(client,"kyzipdistance")
-    
-    # project APIs
+
+
+
+    #MF1 API
+    @app.route('/api/getteam')
+    def getteam():
+        team = """{
+
+            "team_name": "505Team",
+        
+            "Team_members_sids": ["12535791", "10456246"], 
+        
+            "app_status_code": "1"
+        
+        }"""
+        return team
+
+    #-----------------------------------------#
+
+
+
+    #reset (returns app at end, cannot be before other methods)
     @app.route('/api/reset')
     def reset():
         return reset_patient(client)
 
     return app
+
 
 
 if __name__ == '__main__':
