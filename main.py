@@ -62,11 +62,29 @@ def launch_web_api():
         }"""
         return team
 
+    @app.route('/api/getpatient/<string:mrn>/')
+    def getpatient(mrn):
+
+        #mrn->zipcode-> || (then in hospitals.csv) zipcode-> location_code
+        location_code = 5
+
+        s = '''{{mrn= "{0}",
+
+                location_code= "{1}"
+                    
+                }}'''
+
+        return (s.format(mrn, location_code))
+
+    
+        
+
+
     #-----------------------------------------#
 
 
 
-    #reset (returns app at end, cannot be before other methods)
+    #reset
     @app.route('/api/reset')
     def reset():
         return reset_patient(client)
