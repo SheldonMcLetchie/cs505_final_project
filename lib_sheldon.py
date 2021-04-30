@@ -113,23 +113,35 @@ def getlocationcode(mrn):
 
     client.db_open(dbname, login, password)
 
+    #check status code
+    PSC = client.query("SELECT patient_status_code FROM patient where mrn = " +  "'"+ mrn + "'")
+
+    p = PSC[0].oRecordData
+
+    patientstat = p['patient_status_code']
+
+    if patientstat == 0 or 1 or 2 or 4:
+        return 0
+    
+    
+    else:
     #mrn->zipcode
     #query
-    ABC = client.query("SELECT zip_code FROM patient where mrn = " +  "'"+ mrn + "'")
-    
-    #ABC = client.query("""SELECT zip_code FROM patient where mrn = '7288a1ad-d7a4-4df3-ab36-7ab44884be08' """)
-    
-    #access zip_code
-    k = ABC[0].oRecordData
+        ABC = client.query("SELECT zip_code FROM patient where mrn = " +  "'"+ mrn + "'")
+        
+        #ABC = client.query("""SELECT zip_code FROM patient where mrn = '7288a1ad-d7a4-4df3-ab36-7ab44884be08' """)
+        
+        #access zip_code
+        k = ABC[0].oRecordData
 
-    zipcd = k['zip_code']
-    #zipcode-> location_code-----------
-    HID = client.query("SELECT id FROM hospital where zip = " +  "'"+ zipcd + "'")
-    #access zip_code
-    f = HID[0].oRecordData
-    hospitalid = f['id']
+        zipcd = k['zip_code']
+        #zipcode-> location_code-----------
+        HID = client.query("SELECT id FROM hospital where zip = " +  "'"+ zipcd + "'")
+        #access zip_code
+        f = HID[0].oRecordData
+        hospitalid = f['id']
 
-    return (hospitalid)
+        return (hospitalid)
 
     
 
