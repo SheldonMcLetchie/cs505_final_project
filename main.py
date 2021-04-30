@@ -2,7 +2,7 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import dump_db, dump_row_count, reset_patient
+from lib_sheldon import dump_db, dump_row_count, reset_patient, getlocationcode
 from connect_db import connect_db
 
 
@@ -62,13 +62,13 @@ def launch_web_api():
         }"""
         return team
 
-    @app.route('/api/getpatient/<string:mrn>/')
+    @app.route('/api/getpatient/{<string:mrn>}/')
     def getpatient(mrn):
 
         #mrn->zipcode-> || (then in hospitals.csv) zipcode-> location_code
-        location_code = 5
+        location_code = getlocationcode(mrn)
 
-        s = '''{{mrn= "{0}",
+        s = '''{{ mrn= "{0}",
 
                 location_code= "{1}"
                     
