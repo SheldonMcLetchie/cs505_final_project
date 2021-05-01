@@ -119,30 +119,69 @@ def getlocationcode(mrn):
     p = PSC[0].oRecordData
 
     patientstat = p['patient_status_code']
-
-    if patientstat == 0 or 1 or 2 or 4:
-        return 0
-    
-    
-    else:
-    #mrn->zipcode
-    #query
-        ABC = client.query("SELECT zip_code FROM patient where mrn = " +  "'"+ mrn + "'")
-        
-        #ABC = client.query("""SELECT zip_code FROM patient where mrn = '7288a1ad-d7a4-4df3-ab36-7ab44884be08' """)
-        
-        #access zip_code
-        k = ABC[0].oRecordData
-
+    #print("PatientStatus", patientstat)
+   
+    #reporting to closest facility
+    if patientstat in (3,5):
+        #get zipcode
+        FCF = client.query("SELECT zip_code FROM patient where mrn = " +  "'"+ mrn + "'")
+        k = FCF[0].oRecordData
         zipcd = k['zip_code']
-        #zipcode-> location_code-----------
-        HID = client.query("SELECT id FROM hospital where zip = " +  "'"+ zipcd + "'")
-        #access zip_code
-        f = HID[0].oRecordData
-        hospitalid = f['id']
+        
+        #print("patient zip", zipcd)
+       
+       #get closest zipcode to patient zip
+        CFF = client.query("SELECT MIN(distance) FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'")
+        z = CFF[0].oRecordData
+        mindist = z['MIN']
 
-        return (hospitalid)
+        CFG = client.query("SELECT zip_to FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + "AND " + "distance = " +str(mindist))
+        y = CFG[0].oRecordData
+        closestzip = y['zip_to']
 
+        #print("Closest Zip", closestzip)
+
+        #hospitalID of zipcode
+        CZH = client.query("SELECT id FROM hospital where zip = " + str(closestzip))
+        b = CZH[0].oRecordData
+        closesthospitalid = b['id']
+        
+        #print(closesthospitalid)
+
+        return (closesthospitalid)
+    elif patientstat in (0,1,2,4):
+        #print(0)
+        return (0)
+    elif patientstat == 6:
+        FCF = client.query("SELECT zip_code FROM patient where mrn = " +  "'"+ mrn + "'")
+        k = FCF[0].oRecordData
+        zipcd = k['zip_code']
+        
+        #print("patient zip", zipcd)
+       
+       #get closest zipcode to patient zip
+        CFF = client.query("SELECT MIN(distance) FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'")
+        z = CFF[0].oRecordData
+        mindist = z['MIN']
+
+        CFG = client.query("SELECT zip_to FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + "AND " + "distance = " +str(mindist))
+        y = CFG[0].oRecordData
+        closestzip = y['zip_to']
+
+        #print("Closest Zip", closestzip)
+
+        #hospitalID of zipcode
+        CZH = client.query("SELECT id FROM hospital where zip = " + str(closestzip) + " AND " + "trauma = 'LEVEL IV'")
+        b = CZH[0].oRecordData
+        closesthospitalid = b['id']
+        
+        print(closesthospitalid)
+        return (closesthospitalid)
+    else:
+        print(-1)
+        return(-1)
     
 
     
+
+getlocationcode("kaba") 
