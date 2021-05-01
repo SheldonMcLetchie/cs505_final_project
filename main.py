@@ -51,16 +51,12 @@ def launch_web_api():
     #MF1 API
     @app.route('/api/getteam')
     def getteam():
-        team = """{
-
-            "team_name": "505Team",
+        team = dict()
+        team['team_name'] = "505Team"
+        team['Team_members_sids'] = ["12535791", "10456246"]
+        team['app_status_code'] = "0"
         
-            "Team_members_sids": ["12535791", "10456246"], 
-        
-            "app_status_code": "1"
-        
-        }"""
-        return team
+        return json.dumps(team)
 
     @app.route('/api/getpatient/{<string:mrn>}/')
     def getpatient(mrn):

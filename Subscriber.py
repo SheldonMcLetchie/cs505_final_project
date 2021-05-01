@@ -25,8 +25,9 @@ client=connect_db()
 
 username = 'student'
 password = 'student01'
-hostname = 'vcbumg2.cs.uky.edu'
+# hostname = 'vcbumg2.cs.uky.edu' #VM testing and deployment
 virtualhost = '1'
+hostname = '128.163.202.50' #local testing
 
 credentials = pika.PlainCredentials(username, password)
 parameters = pika.ConnectionParameters(hostname,
