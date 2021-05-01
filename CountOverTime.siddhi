@@ -1,0 +1,25 @@
+@App:name('CountOverTime')
+@App:description('Receive events rabbitMQ, and creates an alert if the number of new patients doubles over 15 seconds')
+
+-- get inputdata to work when sent by url before changing source type
+@source(type = 'rabbitmq',
+    uri = 'amqp://student:student01@128.163.202.50:5672',
+    exchange.name ="I must be set. value seemly irrelevant",
+    static = '1',
+    queue.name ='1',
+    @map(type = 'json')
+)
+
+define stream PatientStream (first_name string, last_name string, mrn string, zipcode string, patient_status_code string);
+
+@sink(type = 'log')
+define stream ZipCountStream (zipcode string, zipCount long);
+
+-- Count the incoming events
+@info(name = 'query1')
+from PatientStream#window.time(15 sec)
+select zipcode, count() as zipCount 
+group by zipcode
+insert into ZipCountStream;
+
+--docker run -it -p 8006:8006 -v $PWD/CountOverTime.siddhi:/apps/CountOverTime.siddhi siddhiio/siddhi-runner-alpine -Dapps="/apps/CountOverTime.siddhi"
