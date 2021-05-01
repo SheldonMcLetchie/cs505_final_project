@@ -197,6 +197,3 @@ def getlocationcode(mrn):
         return(closesthospid)
     else:
         return(-1)
-
-
-getlocationcode("nvm")
