@@ -71,12 +71,21 @@ https://siddhi.io/en/v5.0/docs/siddhi-as-a-docker-microservice/#running-siddhi-a
 
 2. run the following in the project directory
 
-```docker run -it -p 8006:8006 -v $PWD/CountOverTime.siddhi:/apps/CountOverTime.siddhi siddhiio/siddhi-runner-alpine -Dapps="/apps/CountOverTime.siddhi"```
+```
+docker run -it -p 8006:8006 -v $PWD/CountOverTime.siddhi:/apps/CountOverTime.siddhi siddhiio/siddhi-runner-alpine -Dapps="/apps/CountOverTime.siddhi"
+
+```
 
 <!-- 
 Example of adding data to the stream
 
-curl -X POST http://localhost:8006/production --header "Content-Type:application/json" -d "{\"event\":{\"name\":\"Cake\",\"amount\":20.12}}"
+curl -X POST http://localhost:8006/production --header "Content-Type:application/json" -d "{\"event\":{\"first_name\": \"John\", \"last_name\": \"Prine\", \"mrn\": \"024c60d2-a1eb-498d-8739-02587ade42ac\", \"zipcode\": \"40351\", \"patient_status_code\": \"3\"}}"
+
+
+curl -X POST http://localhost:8006/production --header "Content-Type:application/json" -d "{\"event\":{\"first_name\": \"John\", \"last_name\": \"Prine\", \"mrn\": \"024c60d2-a1eb-498d-8739-02587ade42ac\", \"zipcode\": \"42200\", \"patient_status_code\": \"3\"}}"
+
+{\"first_name\": \"John\", \"last_name\": \"Prine\", \"mrn\": \"024c60d2-a1eb-498d-8739-02587ade42ac\", \"zipcode\": \"40351\", \"patient_status_code\": \"3\"}
+
 
  -->
 
