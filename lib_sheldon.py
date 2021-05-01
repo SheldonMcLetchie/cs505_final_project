@@ -1,6 +1,9 @@
 import pyorient
 import csv
 import json
+import pandas as pd
+df = pd.read_csv("hospitals.csv", sep= '\t')
+hospcolumn = df['ZIP']
 
 def create_db():
     #database name
@@ -123,29 +126,35 @@ def getlocationcode(mrn):
    
     #reporting to closest facility
     if patientstat in (3,5):
+
         #get zipcode
         FCF = client.query("SELECT zip_code FROM patient where mrn = " +  "'"+ mrn + "'")
         k = FCF[0].oRecordData
         zipcd = k['zip_code']
 
-       
-       #get closest zipcode to patient zip
-        CFF = client.query("SELECT MIN(distance) FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'")
-        z = CFF[0].oRecordData
-        mindist = z['MIN']
+        mylist = []
+       #get mindist from zipcode to hospital zips. hospcolumn has list of all hospitalzips 
+        for zips in hospcolumn:
+            CFF = client.query("SELECT distance FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + " AND "+ "zip_to = " + str(zips))
+            z = CFF[0].oRecordData
+            mindist = z['distance']
+            mylist.append(mindist)
 
-        CFG = client.query("SELECT zip_to FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + "AND " + "distance = " +str(mindist))
-        y = CFG[0].oRecordData
-        closestzip = y['zip_to']
+            minlist = min(mylist)
 
-        #hospitalID of zipcode
-        CZH = client.query("SELECT id FROM hospital where zip = " + str(closestzip))
-        b = CZH[0].oRecordData
-        closesthospitalid = b['id']
-        
-        #print(closesthospitalid)
+
+        #find the zip_to that has the minimum dist
+        ZMD = client.query("SELECT zip_to FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + " AND " + "distance = " + str(minlist))
+        v = ZMD[0].oRecordData
+        zt = v['zip_to']
+
+        #find id of the zip_to that has the minimum
+        CKK = client.query("SELECT id FROM hospital where zip = " + str(zt))
+        h = CKK[0].oRecordData
+        closesthospitalid = h['id']
 
         return (closesthospitalid)
+
     elif patientstat in (0,1,2,4):
         return (0)
     elif patientstat == 6:
@@ -153,24 +162,41 @@ def getlocationcode(mrn):
         k = FCF[0].oRecordData
         zipcd = k['zip_code']
         
-        #print("patient zip", zipcd)
-       
-       #get closest zipcode to patient zip
-        CFF = client.query("SELECT MIN(distance) FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'")
-        z = CFF[0].oRecordData
-        mindist = z['MIN']
+        #-----
+        mylist = [41858, 42437, 42754, 41031, 40456, 41472, 40336, 40831, 40484, 41503, 42078]
+        #find zip with trauma = level IV
+        # CZH = client.query("SELECT zip FROM hospital where trauma = 'LEVEL IV'")
+        # b = CZH[0].oRecordData
+        # closesthospitalzip = b['zip']
+        # mylist.append(closesthospitalzip)
 
-        CFG = client.query("SELECT zip_to FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + "AND " + "distance = " +str(mindist))
+        # print(mylist)
+        
+        mylist2 = []
+       #get mindist from zipcode to hospital zips
+        for zips in mylist:
+            CFF = client.query("SELECT distance FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + " AND "+ "zip_to = " + str(zips))
+            z = CFF[0].oRecordData
+            mindist = z['distance']
+            mylist2.append(mindist)
+
+            minlist = min(mylist2)
+
+        
+       
+       #find zip_to
+        CFG = client.query("SELECT zip_to FROM kyzipdistance WHERE zip_from = " +  "'"+ zipcd + "'" + "AND " + "distance = " + str(minlist))
         y = CFG[0].oRecordData
         closestzip = y['zip_to']
 
-        #hospitalID of zipcode
-        CZH = client.query("SELECT id FROM hospital where zip = " + str(closestzip) + " AND " + "trauma = 'LEVEL IV'")
-        b = CZH[0].oRecordData
-        closesthospitalid = b['id']
+        #use zip_to to find hospital id 
+        CFG = client.query("SELECT id FROM hospital WHERE zip = " + str(closestzip))
+        d = CFG[0].oRecordData
+        closesthospid = d['id']
         
-        return (closesthospitalid)
+        return(closesthospid)
     else:
         return(-1)
-    
 
+
+getlocationcode("nvm")
