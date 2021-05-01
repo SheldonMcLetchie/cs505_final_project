@@ -25,7 +25,7 @@ client=connect_db()
 
 username = 'student'
 password = 'student01'
-hostname = '128.163.202.50'
+hostname = 'vcbumg2.cs.uky.edu'
 virtualhost = '1'
 
 credentials = pika.PlainCredentials(username, password)
