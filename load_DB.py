@@ -4,7 +4,7 @@ from connect_db import connect_db
 create_db()
 client=connect_db()
 # load data
-hospital_file="hospitals.csv"
+hospital_file="hospitals_totalbed.txt"
 load_hospital(client,hospital_file)
 
 #takes 12 mins to load. Need script to make kyzipdistance smaller

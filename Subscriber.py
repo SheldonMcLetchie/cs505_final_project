@@ -6,7 +6,7 @@ import json
 #import pysiddhi
 from time import sleep
 from connect_db import connect_db
-from lib_sheldon import close_brackets
+from lib_sheldon import close_brackets, subtract_bed
 
 
 
@@ -25,8 +25,9 @@ client=connect_db()
 
 username = 'student'
 password = 'student01'
-hostname = 'vcbumg2.cs.uky.edu'
+# hostname = 'vcbumg2.cs.uky.edu' #VM testing and deployment
 virtualhost = '1'
+hostname = '128.163.202.50' #local testing
 
 credentials = pika.PlainCredentials(username, password)
 parameters = pika.ConnectionParameters(hostname,
@@ -54,6 +55,14 @@ for binding_key in binding_keys:
     channel.queue_bind(
         exchange=exchange_name, queue=queue_name, routing_key=binding_key)
 
+
+hospital_zip_result=client.command(
+      "SELECT zip FROM Hospital" 
+)
+hospital_zips=list()
+for records in hospital_zip_result:
+    hospital_zips.append(records.oRecordData['zip'])
+
 print(' [*] Waiting for logs. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
@@ -65,8 +74,27 @@ def callback(ch, method, properties, body):
         client.command(
             "INSERT INTO Patient CONTENT " + str(patient)
         )
+        # ALL I NEED TO DO HERE IS SUBTRACT THE CORRECT BEDS
+ 
 
+        
+        #Step 1: Get correct hospital id
+        if subtract_bed(patient["zip_code"],int(patient["patient_status_code"]),hospital_zips,client) == -1 :
+            print("bed was not subtracted")
+            print("non-existance zipcode")
+        #Step 2: ???
 
+        #step 3: add edge
+        # client.command(
+        #      "CREATE EDGE Admitted FROM ( SELECT FROM Patient WHERE mrn = " + patient['mrn'] + " ) TO (" + \
+        #  "SELECT FROM Hospital WHERE id = " + ???  )
+
+        # "route" this patient to hospital
+        # patient can only be in 1 hospital
+        # Need to have:
+        #   1. hospital id in patient Vertex
+        #   2. subtract 1 bed from patient
+        # get inserted patient
 channel.basic_consume(
     queue=queue_name, on_message_callback=callback, auto_ack=True)
 
