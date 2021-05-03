@@ -2,19 +2,29 @@
 This is the repo for the cs505 project
 
 
-#Running project
-1. Start orientdb container
+# Running project, View run.sh for details or view below
+Only do 1-3 once
+1. Compile java script in 
+```mvn clean package```
 
-docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb:2.2
+2. Start orientdb container
+```docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb:2.2```
 
-2. start main.py (starts the web api)
-Python3 main.py
+3. Get data from csv. wait for this to finish
 
-3. start Subscriber.py
-Python3 Subscriber.py
+```python3 load_DB.py ```
 
+4. start main.py (starts the web api)
+```Python3 main.py```
 
-#Set up
+5. start Subscriber.py
+```Python3 Subscriber.py```
+
+6. start CEP 
+
+```sudo java -jar cs505-pubsub-cep-template-master/target/cs505-pubsub-cep-template-1.0-SNAPSHOT.jar```
+
+# Set up
 I. Git
 1. sudo git clone https://github.com/SheldonMcLetchie/cs505_final_project.git
 

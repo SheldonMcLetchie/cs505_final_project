@@ -2,6 +2,7 @@ import pyorient
 import csv
 import json
 import pandas as pd
+
 df = pd.read_csv("hospitals.csv", sep= '\t')
 hospcolumn = df['ZIP']
 
@@ -43,7 +44,12 @@ def create_db():
     client.command("CREATE PROPERTY Hospital.name String")
     client.command("CREATE PROPERTY Hospital.zip Integer")
     client.command("CREATE PROPERTY Hospital.beds Integer")
+    client.command("CREATE PROPERTY Hospital.total_beds Integer")
     client.command("CREATE PROPERTY Hospital.trauma String")
+
+    #create edge from patient to hospital
+    client.command("CREATE CLASS Admitted EXTENDS E")
+    
     
     #create kyzipdistance class
     client.command("CREATE CLASS kyzipdistance EXTENDS V")
@@ -67,7 +73,14 @@ def dump_row_count(client,className):
     return ''.join(str(x) for x in data)
 
 def load_hospital(client,hospital_file):
-    white_list=["ID", "NAME", "ZIP", "BEDS", "TRAUMA"]
+    reset_status_code = dict()
+    reset_status_code["reset_status_code"] = 0
+    
+    query = "DELETE VERTEX Hospital"
+    client.command(query)
+
+
+    white_list=["ID", "NAME", "ZIP", "BEDS", "TOTAL_BEDS", "TRAUMA"]
     with open(hospital_file,mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter = '\t')
         for row in csv_reader:
@@ -75,6 +88,10 @@ def load_hospital(client,hospital_file):
             short_row = { key.lower():val for (key,val) in row.items() if key in white_list}
             insert_values = json.dumps(short_row)
             client.command("INSERT INTO Hospital CONTENT " + insert_values)
+    
+    reset_status_code["reset_status_code"] = 1
+
+    return json.dumps(reset_status_code)
 
 def load_kydist(client,kydist_file):
      with open(kydist_file,mode='r') as csv_file:
@@ -85,6 +102,7 @@ def load_kydist(client,kydist_file):
             print(insert_values)
             client.command("INSERT INTO kyzipdistance CONTENT " + insert_values)
 
+
 def reset_patient(client):
     reset_status_code = dict()
     reset_status_code["reset_status_code"] = 0
@@ -92,14 +110,105 @@ def reset_patient(client):
     query = "DELETE VERTEX Patient"
     client.command(query)
     
-    #try:
-    #    client.command(query)
-    #except pyorient.exceptions:
-    #    return json.dumps(reset_status_code)
     
     reset_status_code["reset_status_code"] = 1
 
     return json.dumps(reset_status_code)
+
+def getzipalertlist():
+    response = dict()
+    zipalertlist=list()
+    with open("zipalertlist.txt") as f:
+        for line in f:
+            zipalertlist.append(line.strip('\n'))
+    response["ziplist"] = zipalertlist
+
+    return json.dumps(response)
+
+def getalertlist():
+    response = dict()
+    alertlist=list()
+    with open("zipalertlist.txt") as f:
+        for line in f:
+            alertlist.append(line.strip('\n'))
+    if(len(alertlist)>=5):
+        response["state_status"] = "1"
+    
+    else:
+        response["state_status"] = "0"
+    
+
+    return json.dumps(response)
+
+def subtract_bed(zip_code,patient_status_code,hospital_zips,client):
+    #staycodes = [stay home],[closest hospital ],[emercgey]
+    staycodes = [[0, 1, 2, 4], [3, 5], [6]]
+   
+    # if patient_status_code in staycodes[0]:
+    if patient_status_code in staycodes[0]:
+        return 0
+
+    elif patient_status_code in staycodes[1]:
+        hospital_zip=get_min_dist_hospital_zip(zip_code,hospital_zips,client)
+        if(hospital_zip != -1):
+            print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
+            sub_bed(hospital_zip,client)
+            return 0
+        else:
+            return -1
+
+    elif patient_status_code in staycodes[2]:
+        # trama_zips 6
+        trama_zips = [[40336,40456,40484,40831,41031,41472,41503,41858,42078,42437,42754],[40422,42303,42718],[41501],[40202,40536]]
+        hospital_zip = get_emergency_hospital_zip(zip_code,trama_zips,client)
+        if (hospital_zip != -1) :
+            print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
+            sub_bed(hospital_zip,client)
+            return 0
+        else:
+            return -1
+
+    
+
+def get_min_dist_hospital_zip(zip_code,hospital_zips,client):
+    str_hospitals=''.join(str(hospital_zips))
+    result=client.command(
+        "SELECT min(distance), zip_to AS hospital_zip FROM kyzipdistance WHERE zip_from = " + zip_code + " AND zip_to IN " + str_hospitals 
+    )
+    if bool(result[0].oRecordData):
+        return result[0].oRecordData["hospital_zip"]
+    return -1
+
+def get_emergency_hospital_zip(zip_code,hospital_zips,client):
+    str_hospitals=''.join(str(hospital_zips[0]))
+    result=client.command(
+        "SELECT min(distance), zip_to AS hospital_zip FROM kyzipdistance WHERE zip_from = " + zip_code + " AND zip_to IN " + str_hospitals 
+    )
+    if bool(result[0].oRecordData):
+        return result[0].oRecordData["hospital_zip"]
+    return -1
+
+def get_hospital_id(hospital_zip,client):
+    result=client.command(
+        "SELECT id FROM Hospital WHERE zip = " + str(hospital_zip) + " LIMIT 1"
+    )
+
+    return result[0].oRecordData["id"]
+
+
+def sub_bed(hospital_zip,client):
+    client.command(
+        "UPDATE Hospital INCREMENT beds = -1 WHERE zip = " + str(hospital_zip)
+    )
+    #maybe build edge here? help with OF 2
+    # WHERE hospital_zip = " + str(hospital_zip)
+
+def getbeds(id,client):
+    result=client.command(
+        "SELECT total_beds, beds , zip FROM Hospital WHERE id = " + id
+    )
+
+    return result[0].oRecordData
 
 #----------------------
 
