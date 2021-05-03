@@ -51,29 +51,28 @@ def launch_web_api():
     #MF1 API
     @app.route('/api/getteam')
     def getteam():
+
         team = dict()
         team['team_name'] = "505Team"
         team['Team_members_sids'] = ["12535791", "10456246"]
-        team['app_status_code'] = "0"
-        
+        team['app_status_code'] = "1"
+
+        #encode and respond
         return json.dumps(team)
 
-    @app.route('/api/getpatient/{<string:mrn>}/')
+
+    @app.route('/api/getpatient/<string:mrn>/')
     def getpatient(mrn):
 
-        #mrn->zipcode-> || (then in hospitals.csv) zipcode-> location_code
         location_code = getlocationcode(mrn)
 
-        s = '''{{ mrn= "{0}",
-
-                location_code= "{1}"
-                    
-                }}'''
-
-        return (s.format(mrn, location_code))
-
-    
+        patient = dict()
+        patient['mrn'] = str(mrn)
+        patient['location_code'] = str(location_code)
         
+
+        #encode and respond
+        return json.dumps(patient)
 
 
     #-----------------------------------------#
