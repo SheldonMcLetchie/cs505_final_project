@@ -91,6 +91,7 @@ def load_kydist(client,kydist_file):
             print(insert_values)
             client.command("INSERT INTO kyzipdistance CONTENT " + insert_values)
 
+
 def reset_patient(client):
     reset_status_code = dict()
     reset_status_code["reset_status_code"] = 0

@@ -1,7 +1,8 @@
 #!/bin/bash
 # This script is for running the project clean. It includes compliing java
-# run as:
+# to run in background:
 # nohup run_full.sh &
+# to run indivually run each line, removing '>> /dev/null 2>&1 &''
 cd cs505-pubsub-cep-template-master/
 sudo mvn clean package
 cd ..
