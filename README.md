@@ -2,17 +2,29 @@
 This is the repo for the cs505 project
 
 
-#Running project
+# Running project
+0. Compile java script in 
+```
+mvn clean package
+```
 1. Start orientdb container
-
+```
 docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb:2.2
+```
+2. Get data from csv. wait for this to finish
 
-2. start main.py (starts the web api)
+```
+python3 load_DB.py 
+```
+
+3. start main.py (starts the web api)
+```
 Python3 main.py
-
-3. start Subscriber.py
+```
+4. start Subscriber.py
+```
 Python3 Subscriber.py
-
+```
 
 #Set up
 I. Git
