@@ -44,8 +44,8 @@ public class OutputSubscriber implements InMemoryBroker.Subscriber {
                 // 2.1 if curr_zipcodes.prev_zip_code = curr_json_msg.prev_zip_code AND prev_zip_value =< 2*msg.value they have store in variable ziplist 
    
                 String curr_json_str=curr_json_msg.toString();
-                if(true /*curr_json_str.contains("\"zip_code\":\""+prev_zip_code+"\"")*/ ){ 
-                    /*
+                if(/*true*/ curr_json_str.contains("\"zip_code\":\""+prev_zip_code+"\"") ){ 
+                    
                     int zipcount_index_start= curr_json_str.indexOf("\"zip_code\":\""+prev_zip_code+"\"");
                     int zipcount_index_end= curr_json_str.indexOf('}', zipcount_index_start);
                     int curr_count= Integer.parseInt(curr_json_str.substring(zipcount_index_start+count_offset,zipcount_index_end));
@@ -56,22 +56,22 @@ public class OutputSubscriber implements InMemoryBroker.Subscriber {
                         // store zin variable ziplist
                         ziplist.add(prev_zip_code);
                     }
-                    */
                     
                     
-                    // ---- delete below this block till end
-                    int zipcount_index_start = curr_json_str.indexOf("\"zip_code\""); //delete me after test
-                    int zipcount_index_end= curr_json_str.indexOf('}', zipcount_index_start);
-                    int curr_count= Integer.parseInt(curr_json_str.substring(zipcount_index_start+count_offset ,zipcount_index_end));
-                    int prev_count = Integer.parseInt(prev.getAsJsonObject().get("event").getAsJsonObject().get("count").toString());
+                    
+                    // // ---- delete below this block till end
+                    // int zipcount_index_start = curr_json_str.indexOf("\"zip_code\""); //delete me after test
+                    // int zipcount_index_end= curr_json_str.indexOf('}', zipcount_index_start);
+                    // int curr_count= Integer.parseInt(curr_json_str.substring(zipcount_index_start+count_offset ,zipcount_index_end));
+                    // int prev_count = Integer.parseInt(prev.getAsJsonObject().get("event").getAsJsonObject().get("count").toString());
                    
                     
                       
-                    if (true){
-                        // store zin variable ziplist
-                        ziplist.add(prev_zip_code);
-                    }
-                     // --- end of delete
+                    // if (true){
+                    //     // store zin variable ziplist
+                    //     ziplist.add(prev_zip_code);
+                    // }
+                    //  // --- end of delete
                     
                     
                 }
