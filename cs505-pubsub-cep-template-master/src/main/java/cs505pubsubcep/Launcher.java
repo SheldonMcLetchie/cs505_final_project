@@ -60,13 +60,13 @@ public class Launcher {
         // startServer();
 
 
-        try {
-            while (true) {
-                Thread.sleep(5000);
-            }
-        }catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        // try {
+        //     while (true) {
+        //         Thread.sleep(5000);
+        //     }
+        // }catch (Exception ex) {
+        //     ex.printStackTrace();
+        // }
     }
 
     // private static void startServer() throws IOException {

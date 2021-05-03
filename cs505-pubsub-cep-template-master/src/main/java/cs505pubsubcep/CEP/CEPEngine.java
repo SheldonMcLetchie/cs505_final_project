@@ -58,12 +58,16 @@ public class CEPEngine {
             topicMap.put(inputStreamName,inputTopic);
             topicMap.put(outputStreamName,outputTopic);
 
+            // print strings
             String sourceString = getSourceString(inputStreamAttributesString, inputTopic, inputStreamName);
             System.out.println("sourceString: [" + sourceString + "]");
             String sinkString = getSinkString(outputTopic,outputStreamName,outputStreamAttributesString);
             System.out.println("sinkString: [" + sinkString + "]");
             //Generating runtime
 
+
+
+            // runs siddhi script
             siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(sourceString + " " + sinkString + " " + queryString);
 
             InMemoryBroker.Subscriber subscriberTest = new OutputSubscriber(outputTopic,outputStreamName);
