@@ -139,7 +139,7 @@ def subtract_bed(zip_code,patient_status_code,hospital_zips,client):
     elif patient_status_code in staycodes[1]:
         hospital_zip=get_min_dist_hospital_zip(zip_code,hospital_zips,client)
         if(hospital_zip != -1):
-            # print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
+            print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
             sub_bed(hospital_zip,client)
             return 0
         else:
@@ -150,7 +150,7 @@ def subtract_bed(zip_code,patient_status_code,hospital_zips,client):
         trama_zips = [[40336,40456,40484,40831,41031,41472,41503,41858,42078,42437,42754],[40422,42303,42718],[41501],[40202,40536]]
         hospital_zip = get_emergency_hospital_zip(zip_code,trama_zips,client)
         if (hospital_zip != -1) :
-            # print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
+            print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
             sub_bed(hospital_zip,client)
             return 0
         else:
