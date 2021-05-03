@@ -45,8 +45,11 @@ def launch_web_api():
     @app.route('/kydist_count')
     def kydist_dump():
         return dump_row_count(client,"kyzipdistance")
-
-
+   
+    @app.route('/reset_beds')
+    def reset_beds():
+        filename="hospitals_totalbed.txt"
+        load_hospital(client,filename)
 
     #MF1 API
     @app.route('/api/getteam')
