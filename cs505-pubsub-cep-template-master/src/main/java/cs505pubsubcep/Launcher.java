@@ -40,7 +40,7 @@ public class Launcher {
         String outputStreamAttributesString = "zip_code string, count long";
 
         String queryString = " " +
-                "from PatientInStream#window.timeBatch(5 sec) " +
+                "from PatientInStream#window.timeBatch(2 sec) " +
                 "select zip_code, count() as count " +
                 "group by zip_code " +
                 "insert into PatientOutStream; ";

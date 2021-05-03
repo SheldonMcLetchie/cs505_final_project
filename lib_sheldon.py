@@ -101,6 +101,16 @@ def reset_patient(client):
 
     return json.dumps(reset_status_code)
 
+def getzipalertlist():
+    alertlist = dict()
+    l=list()
+    with open("zipalertlist.txt") as f:
+        for line in f:
+            l.append(line.strip('\n'))
+    alertlist["ziplist"] = l
+
+    return json.dumps(alertlist)
+
 #----------------------
 
 

@@ -2,7 +2,7 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import dump_db, dump_row_count, reset_patient, getlocationcode
+from lib_sheldon import dump_db, dump_row_count, reset_patient, getlocationcode, getzipalertlist
 from connect_db import connect_db
 
 
@@ -77,7 +77,10 @@ def launch_web_api():
 
     #-----------------------------------------#
 
-
+    #RTR1
+    @app.route('/api/zipalertlist')
+    def zipalertlist():
+        return getzipalertlist()
 
     #reset
     @app.route('/api/reset')
