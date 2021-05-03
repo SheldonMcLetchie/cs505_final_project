@@ -73,6 +73,13 @@ def dump_row_count(client,className):
     return ''.join(str(x) for x in data)
 
 def load_hospital(client,hospital_file):
+    reset_status_code = dict()
+    reset_status_code["reset_status_code"] = 0
+    
+    query = "DELETE VERTEX Hospital"
+    client.command(query)
+
+
     white_list=["ID", "NAME", "ZIP", "BEDS", "TOTAL_BEDS", "TRAUMA"]
     with open(hospital_file,mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter = '\t')
@@ -81,6 +88,10 @@ def load_hospital(client,hospital_file):
             short_row = { key.lower():val for (key,val) in row.items() if key in white_list}
             insert_values = json.dumps(short_row)
             client.command("INSERT INTO Hospital CONTENT " + insert_values)
+    
+    reset_status_code["reset_status_code"] = 1
+
+    return json.dumps(reset_status_code)
 
 def load_kydist(client,kydist_file):
      with open(kydist_file,mode='r') as csv_file:

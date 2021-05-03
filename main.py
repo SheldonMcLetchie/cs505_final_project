@@ -2,7 +2,7 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import dump_db, dump_row_count, reset_patient, getlocationcode, getzipalertlist, getalertlist, getbeds
+from lib_sheldon import dump_db, dump_row_count, reset_patient, getlocationcode, getzipalertlist, getalertlist, getbeds, load_hospital
 from connect_db import connect_db
 
 
@@ -49,7 +49,8 @@ def launch_web_api():
     @app.route('/reset_beds')
     def reset_beds():
         filename="hospitals_totalbed.txt"
-        load_hospital(client,filename)
+        return load_hospital(client,filename)
+        
 
     #MF1 API
     @app.route('/api/getteam')
