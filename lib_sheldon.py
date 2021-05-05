@@ -51,9 +51,6 @@ def create_db():
     client.command("CREATE PROPERTY Hospital.beds Integer")
     client.command("CREATE PROPERTY Hospital.total_beds Integer")
     client.command("CREATE PROPERTY Hospital.trauma String")
-
-    #create edge from patient to hospital
-    #client.command("CREATE CLASS Admitted EXTENDS E")
     
     
 
@@ -64,8 +61,8 @@ def create_db():
     client.command("CREATE PROPERTY kyzipdistance.zip_to Integer")
     client.command("CREATE PROPERTY kyzipdistance.distance Double")
 
-    #create distance from between each zipcode
-    
+    #index distance to improve query speed
+    client.command("CREATE INDEX kyzipdistance.distance NOTUNIQUE")
 
 
     
