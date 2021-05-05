@@ -23,62 +23,57 @@ public class OutputSubscriber implements InMemoryBroker.Subscriber {
     public OutputSubscriber(String topic, String streamName) {
         this.topic = topic;
     }
+    
     JsonArray prev_zipCounts = new JsonArray();
     int count_offset = 27;
     @Override
     public void onMessage(Object msg) {
-    // Editing Code here. Sheldon 050121
         
         try {
-            //1. get message as json_array/object parsible [first] DONE!!
+            //Step 1. get message as json_array/object
             JsonArray curr_json_msg = new JsonParser().parse(String.valueOf(msg)).getAsJsonArray();
             ArrayList<String> ziplist = new ArrayList<String>();
-
-            //2. check message if any zipcode counts in prev_zipcodes have doubled [third]
+            
+            //Step 2. check msg if any zipcode counts from last batch have doubled 
             for(int i=0; i < prev_zipCounts.size(); i++){
                 JsonElement prev = prev_zipCounts.get(i);
                 System.out.println(prev);
         
                 String prev_zip_code=prev.getAsJsonObject().get("event").getAsJsonObject().get("zip_code").toString();
-                 // iterate through prev_zipcounts
-                // 2.1 if curr_zipcodes.prev_zip_code = curr_json_msg.prev_zip_code AND prev_zip_value =< 2*msg.value they have store in variable ziplist 
+                // iterate through prev_zipcounts 
    
                 String curr_json_str=curr_json_msg.toString();
                 if(/*true*/ curr_json_str.contains("\"zip_code\":\""+prev_zip_code+"\"") ){ 
                     
                     int zipcount_index_start= curr_json_str.indexOf("\"zip_code\":\""+prev_zip_code+"\"");
-                    int zipcount_index_end= curr_json_str.indexOf('}', zipcount_index_start);
+                    int zipcount_index_end = curr_json_str.indexOf('}', zipcount_index_start);
                     int curr_count= Integer.parseInt(curr_json_str.substring(zipcount_index_start+count_offset,zipcount_index_end));
 
                     int prev_count = Integer.parseInt(prev.getAsJsonObject().get("event").getAsJsonObject().get("count").toString());
               
                     if (curr_count*2 >= prev_count){
-                        // store zin variable ziplist
+                        // store zip variable ziplist
                         ziplist.add(prev_zip_code);
                     }
                     
-                    
-                    
-                    // // ---- delete below this block till end
+                    /*// BLOCK for testing on every incoming patient
+                    // 
                     // int zipcount_index_start = curr_json_str.indexOf("\"zip_code\""); //delete me after test
                     // int zipcount_index_end= curr_json_str.indexOf('}', zipcount_index_start);
                     // int curr_count= Integer.parseInt(curr_json_str.substring(zipcount_index_start+count_offset ,zipcount_index_end));
                     // int prev_count = Integer.parseInt(prev.getAsJsonObject().get("event").getAsJsonObject().get("count").toString());
-                   
-                    
-                      
+                     
                     // if (true){
                     //     // store zin variable ziplist
                     //     ziplist.add(prev_zip_code);
                     // }
                     //  // --- end of delete
-                    
+                    */
                     
                 }
             }
-            // 
                            
-            //3. store ziplist data somewhere python can access [4th]
+            //3. store ziplist data 
             System.out.println("ziplist"+ziplist);
             
             FileWriter writer = new FileWriter("zipalertlist.txt"); 
@@ -86,7 +81,7 @@ public class OutputSubscriber implements InMemoryBroker.Subscriber {
                 writer.write(str.substring(1, str.length()-1) + System.lineSeparator());
             }
             writer.close();
-            //4. update current zipcode and counts [second] DONE!!!
+            //4. update current zipcode and counts
             prev_zipCounts = curr_json_msg;
 
             System.out.println();
