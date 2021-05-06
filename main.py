@@ -2,7 +2,7 @@ import json
 from flask import Flask
 import socket
 import time
-from lib_sheldon import dump_db, dump_row_count, reset_patient, getlocationcode, getzipalertlist, getalertlist, getbeds, load_hospital
+from lib_sheldon import dump_db, dump_row_count, reset_app, getlocationcode, getzipalertlist, getalertlist, getbeds, load_hospital, gettestcount
 from connect_db import connect_db
 
 
@@ -12,7 +12,8 @@ def launch_web_api():
 
     # launch web application
     app = Flask(__name__)  
-
+    reset_app(client)
+    
     # testing APIs
     @app.route('/test/')
     def get_status():
@@ -67,7 +68,7 @@ def launch_web_api():
     #MF 2
     @app.route('/api/reset')
     def reset():
-        return reset_patient(client)
+        return reset_app(client)
 
     #OF 2
     @app.route('/api/getpatient/<string:mrn>/')
@@ -107,9 +108,14 @@ def launch_web_api():
     def alertlist():
         return getalertlist()
 
+    #RTR3
+    @app.route('/api/testcount')
+    def testcount():
+        return gettestcount()
 
+  
     return app
-
+    
 
 
 if __name__ == '__main__':
