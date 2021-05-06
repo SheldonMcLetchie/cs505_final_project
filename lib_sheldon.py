@@ -112,13 +112,21 @@ def load_kydist(client,kydist_file):
             client.command("INSERT INTO kyzipdistance CONTENT " + insert_values)
 
 
-def reset_patient(client):
+def reset_app(client):
     reset_status_code = dict()
     reset_status_code["reset_status_code"] = 0
     
     query = "DELETE VERTEX Patient"
     client.command(query)
     
+    # overwrite textfiles
+    f = open("zipalertlist.txt","w")
+    f.write("")
+    f.close
+
+    g = open("testcount.txt","w")
+    g.write("0\n0\n")
+    g.close
     
     reset_status_code["reset_status_code"] = 1
 
@@ -146,8 +154,19 @@ def getalertlist():
     else:
         response["state_status"] = "0"
     
+    return json.dumps(response)
+
+def gettestcount():
+    response = dict()
+    testcount=list()
+    with open("testcount.txt") as f:
+        for line in f:
+            testcount.append(line.strip('\n'))
+    response["positive_test"] = testcount[0]
+    response["negative_test"] = testcount[1]
 
     return json.dumps(response)
+
 
 def subtract_bed(zip_code,patient_status_code,hospital_zips,client):
     #staycodes = [stay home],[closest hospital ],[emercgey]
@@ -218,6 +237,7 @@ def getbeds(id,client):
     )
 
     return result[0].oRecordData
+
 
 #----------------------
 
