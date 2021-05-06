@@ -128,6 +128,8 @@ def reset_app(client):
     g.write("0\n0\n")
     g.close
     
+    #Reset beds 
+
     reset_status_code["reset_status_code"] = 1
 
     return json.dumps(reset_status_code)

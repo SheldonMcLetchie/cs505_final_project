@@ -15,7 +15,7 @@ def launch_web_api():
     reset_app(client)
     
     # testing APIs
-    @app.route('/test/')
+    @app.route('/test')
     def get_status():
         #query
         start_time = time.time()
@@ -71,7 +71,7 @@ def launch_web_api():
         return reset_app(client)
 
     #OF 2
-    @app.route('/api/getpatient/<string:mrn>/')
+    @app.route('/api/getpatient/<string:mrn>')
     def getpatient(mrn):
 
         location_code = getlocationcode(mrn)
