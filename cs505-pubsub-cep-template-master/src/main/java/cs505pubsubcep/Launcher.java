@@ -41,7 +41,7 @@ public class Launcher {
         
 
         String queryString = " " +
-                "from PatientInStream#window.timeBatch(3 sec) " +
+                "from PatientInStream#window.timeBatch(15 sec) " +
                 "select zip_code, ifThenElse(patient_status_code == '2' or patient_status_code == '5' or patient_status_code == '6' , '1', '0') AS testcount " +
                 "insert into PatientOutStream; ";
 
