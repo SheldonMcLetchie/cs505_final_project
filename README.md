@@ -5,7 +5,13 @@ This is the repo for the cs505 project
 # Running project, View run.sh for details or view below
 Only do 1-3 once
 1. Compile java script in 
-```mvn clean package```
+```
+
+cd cs505-pubsub-cep-template-master/
+sudo mvn clean package
+cd ..
+
+```
 
 2. Start orientdb container
 ```docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb:2.2```
