@@ -85,7 +85,7 @@ public class OutputSubscriber implements InMemoryBroker.Subscriber {
                 String key_prev = entry_previous.getKey();
                 Long value_prev = entry_previous.getValue();
                 
-                if(zipcode_counts_curr.containsKey(key_prev) /*&& zipcode_counts_curr.get(key_prev)*2 >= value_prev*/){               
+                if(zipcode_counts_curr.containsKey(key_prev) && zipcode_counts_curr.get(key_prev)*2 >= value_prev){               
                     // store zip variable ziplist
                     ziplist.add(key_prev);         
                 }
