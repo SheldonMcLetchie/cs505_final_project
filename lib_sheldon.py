@@ -127,9 +127,9 @@ def reset_app(client):
     g = open("testcount.txt","w")
     g.write("0\n0\n")
     g.close
-    
-    #Reset beds 
 
+    #reset beds
+    load_hospital(client,"hospitals_totalbed.txt")
     reset_status_code["reset_status_code"] = 1
 
     return json.dumps(reset_status_code)
