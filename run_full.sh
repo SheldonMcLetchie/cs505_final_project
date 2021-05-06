@@ -11,9 +11,10 @@ cd ..
 sudo docker run -d --name orientdb -p 2424:2424 -p 2480:2480 -e ORIENTDB_ROOT_PASSWORD=rootpwd orientdb:2.2
 python3 load_DB.py
 
+#start webserver
+python3 main.py
+
 #run to start subscribers for orient and siddhi
 python3 Subscriber.py >> /dev/null 2>&1 &
 sudo java -jar cs505-pubsub-cep-template-master/target/cs505-pubsub-cep-template-1.0-SNAPSHOT.jar >> /dev/null 2>&1 &
 
-#start webserver
-python3 main.py
