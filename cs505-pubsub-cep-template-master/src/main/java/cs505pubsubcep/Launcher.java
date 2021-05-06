@@ -37,17 +37,18 @@ public class Launcher {
         String inputStreamAttributesString = "first_name string, last_name string, mrn string, zip_code string, patient_status_code string";
 
         String outputStreamName = "PatientOutStream";
-        String outputStreamAttributesString = "zip_code string, count long";
+        String outputStreamAttributesString = "zip_code string, testcount string";
         
 
         String queryString = " " +
-                "from PatientInStream[patient_status_code == '0' or patient_status_code == '1' or patient_status_code == '2' or patient_status_code == '4']#window.timeBatch(15 sec) " +
-                "select zip_code, count() as count " +
+                "from PatientInStream#window.timeBatch(3 sec) " +
+                "select zip_code, ifThenElse(patient_status_code == '2' or patient_status_code == '5' or patient_status_code == '6' , '1', '0') AS testcount " +
                 "insert into PatientOutStream; ";
 
         //END MODIFY
 
         cepEngine.createCEP(inputStreamName, outputStreamName, inputStreamAttributesString, outputStreamAttributesString, queryString);
+
 
         System.out.println("CEP Started...");
 

@@ -15,6 +15,12 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class OutputSubscriber implements InMemoryBroker.Subscriber {
 
@@ -23,75 +29,87 @@ public class OutputSubscriber implements InMemoryBroker.Subscriber {
     public OutputSubscriber(String topic, String streamName) {
         this.topic = topic;
     }
-    
-    JsonArray prev_zipCounts = new JsonArray();
-    int count_offset = 27;
+
+    HashMap<String, Long> zipcode_counts_prev = new HashMap<String, Long>();
+    HashMap<String, Long> pos_neg_counts = new HashMap<String, Long>();
+    int count_offset = 27; //string index offset to get to the first character that is the count at a particular zipcode
     @Override
     public void onMessage(Object msg) {
-        
         try {
+            // output message
+            System.out.println();
+            System.out.println("OUTPUT CEP EVENT: " + msg);
+            System.out.println();
+
             //Step 1. get message as json_array/object
+            
             JsonArray curr_json_msg = new JsonParser().parse(String.valueOf(msg)).getAsJsonArray();
+            // return variables
             ArrayList<String> ziplist = new ArrayList<String>();
             
-            //Step 2. check msg if any zipcode counts from last batch have doubled 
-            for(int i=0; i < prev_zipCounts.size(); i++){
-                JsonElement prev = prev_zipCounts.get(i);
-                System.out.println(prev);
-        
-                String prev_zip_code=prev.getAsJsonObject().get("event").getAsJsonObject().get("zip_code").toString();
-                // iterate through prev_zipcounts 
-   
-                String curr_json_str=curr_json_msg.toString();
-                if(/*true*/ curr_json_str.contains("\"zip_code\":\""+prev_zip_code+"\"") ){ 
-                    
-                    int zipcount_index_start= curr_json_str.indexOf("\"zip_code\":\""+prev_zip_code+"\"");
-                    int zipcount_index_end = curr_json_str.indexOf('}', zipcount_index_start);
-                    int curr_count= Integer.parseInt(curr_json_str.substring(zipcount_index_start+count_offset,zipcount_index_end));
+            File f = new File("testcount.txt");
+            Scanner scanner = new Scanner(f);
+            Long positive = scanner.nextLong();
+            Long negative = scanner.nextLong();
+            scanner.close();
+            
+            System.out.println("first positive: " + positive + " negative: " + negative);
 
-                    int prev_count = Integer.parseInt(prev.getAsJsonObject().get("event").getAsJsonObject().get("count").toString());
-              
-                    if (curr_count*2 >= prev_count){
-                        // store zip variable ziplist
-                        ziplist.add(prev_zip_code);
-                    }
-                    
-                    /*// BLOCK for testing on every incoming patient
-                    // 
-                    // int zipcount_index_start = curr_json_str.indexOf("\"zip_code\""); //delete me after test
-                    // int zipcount_index_end= curr_json_str.indexOf('}', zipcount_index_start);
-                    // int curr_count= Integer.parseInt(curr_json_str.substring(zipcount_index_start+count_offset ,zipcount_index_end));
-                    // int prev_count = Integer.parseInt(prev.getAsJsonObject().get("event").getAsJsonObject().get("count").toString());
-                     
-                    // if (true){
-                    //     // store zin variable ziplist
-                    //     ziplist.add(prev_zip_code);
-                    // }
-                    //  // --- end of delete
-                    */
-                    
+            //Step 2 get counts of all zipcodes
+            HashMap<String, Long> zipcode_counts_curr = new HashMap<String, Long>();
+            for(JsonElement line : curr_json_msg){
+                // RTR 2
+                String zipcode = line.getAsJsonObject().get("event").getAsJsonObject().get("zip_code").toString();
+                if(zipcode_counts_curr.containsKey(zipcode)){
+                    zipcode_counts_curr.put(zipcode, zipcode_counts_curr.get(zipcode)+Long.valueOf(1));
+                }
+                else {
+                    zipcode_counts_curr.put(zipcode, Long.valueOf(1));
+                }
+
+                // RTR 3
+                String test_count_value = line.getAsJsonObject().get("event").getAsJsonObject().get("testcount").toString();
+                System.out.println(test_count_value);
+                if(test_count_value.equals("\"1\"")){
+                    // increment positive
+                    positive++;
+                }
+                else {
+                    // incremement nagative
+                    negative++;
                 }
             }
-                           
+            
+            //Step 3. check msg if any zipcode counts from last batch have doubled 
+            for(Map.Entry<String, Long> entry_previous : zipcode_counts_prev.entrySet()){
+                String key_prev = entry_previous.getKey();
+                Long value_prev = entry_previous.getValue();
+                
+                if(zipcode_counts_curr.containsKey(key_prev) /*&& zipcode_counts_curr.get(key_prev)*2 >= value_prev*/){               
+                    // store zip variable ziplist
+                    ziplist.add(key_prev);         
+                }
+            }
+
             //3. store ziplist data 
             System.out.println("ziplist"+ziplist);
-            
+            // write zipalertlist
             FileWriter writer = new FileWriter("zipalertlist.txt"); 
             for(String str: ziplist){
                 writer.write(str.substring(1, str.length()-1) + System.lineSeparator());
             }
             writer.close();
+
+            // write testcount 
+            FileWriter writer_testcount = new FileWriter("testcount.txt"); 
+            writer_testcount.write(positive + System.lineSeparator());
+            writer_testcount.write(negative + System.lineSeparator());
+            writer_testcount.close();
+
             //4. update current zipcode and counts
-            prev_zipCounts = curr_json_msg;
+            zipcode_counts_prev = zipcode_counts_curr;
 
-            System.out.println();
-            System.out.println("OUTPUT CEP EVENT: " + msg);
-            System.out.println();
-
-           
-            //String[] sstr = String.valueOf(msg).split(":");
-            //String[] outval = sstr[2].split("}");
-            //Launcher.accessCount = Long.parseLong(outval[0]);
+            System.out.println("positive: " + positive + " negative: " + negative);
 
         } catch(Exception ex) {
             ex.printStackTrace();
