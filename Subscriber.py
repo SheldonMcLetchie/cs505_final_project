@@ -25,9 +25,9 @@ client=connect_db()
 
 username = 'student'
 password = 'student01'
-hostname = 'vcbumg2.cs.uky.edu' #VM testing and deployment
+#hostname = 'vcbumg2.cs.uky.edu' #VM testing and deployment
 virtualhost = '1'
-#hostname = '128.163.202.50' #local testing
+hostname = '128.163.202.50' #local testing
 
 credentials = pika.PlainCredentials(username, password)
 parameters = pika.ConnectionParameters(hostname,
@@ -79,22 +79,13 @@ def callback(ch, method, properties, body):
 
         
         #Step 1: Get correct hospital id
-        if subtract_bed(patient["zip_code"],int(patient["patient_status_code"]),hospital_zips,client) == -1 :
+        err_check=subtract_bed(patient["zip_code"],int(patient["patient_status_code"]),hospital_zips,client)
+        if err_check == -1 :
             print("bed was not subtracted")
             print("non-existance zipcode")
-        #Step 2: ???
-
-        #step 3: add edge
-        # client.command(
-        #      "CREATE EDGE Admitted FROM ( SELECT FROM Patient WHERE mrn = " + patient['mrn'] + " ) TO (" + \
-        #  "SELECT FROM Hospital WHERE id = " + ???  )
-
-        # "route" this patient to hospital
-        # patient can only be in 1 hospital
-        # Need to have:
-        #   1. hospital id in patient Vertex
-        #   2. subtract 1 bed from patient
-        # get inserted patient
+        elif err_check == -2:
+            print("all hospitals full")
+ 
 channel.basic_consume(
     queue=queue_name, on_message_callback=callback, auto_ack=True)
 
