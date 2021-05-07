@@ -2,6 +2,7 @@ import pyorient
 import csv
 import json
 import pandas as pd
+from copy import deepcopy
 
 #hospital zip column to dataframe
 df = pd.read_csv("hospitals.csv", sep= '\t')
@@ -170,27 +171,32 @@ def gettestcount():
     return json.dumps(response)
 
 
-def subtract_bed(zip_code,patient_status_code,hospital_zips,client):
+def subtract_bed(zip_code,patient_status_code,hospital_zips_orignal,client):
     #staycodes = [stay home],[closest hospital ],[emercgey]
     staycodes = [[0, 1, 2, 4], [3, 5], [6]]
-   
+    hospital_zips = deepcopy(hospital_zips_orignal)
     # if patient_status_code in staycodes[0]:
     if patient_status_code in staycodes[0]:
         return 0
 
     elif patient_status_code in staycodes[1]:
+        # load hospital ids in list
         hospital_zip=get_min_dist_hospital_zip(zip_code,hospital_zips,client)
-        if(hospital_zip != -1):
+        if(hospital_zip == -1):
+            return -1
+        elif(hospital_zip == -2):
+            pass
+        else:
             print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
             sub_bed(hospital_zip,client)
             return 0
-        else:
-            return -1
+            
 
     elif patient_status_code in staycodes[2]:
         # trama_zips 6
-        trama_zips = [[40336,40456,40484,40831,41031,41472,41503,41858,42078,42437,42754],[40422,42303,42718],[41501],[40202,40536]]
-        hospital_zip = get_emergency_hospital_zip(zip_code,trama_zips,client)
+        trama_zips_original = [40336,40456,40484,40831,41031,41472,41503,41858,42078,42437,42754]
+        trama_zips = deepcopy(trama_zips_original)
+        hospital_zip = get_min_dist_hospital_zip(zip_code,trama_zips,client)
         if (hospital_zip != -1) :
             print("hospital id: " + str(get_hospital_id(hospital_zip,client)) + " zip " + str(hospital_zip))
             sub_bed(hospital_zip,client)
@@ -201,22 +207,32 @@ def subtract_bed(zip_code,patient_status_code,hospital_zips,client):
     
 
 def get_min_dist_hospital_zip(zip_code,hospital_zips,client):
+
     str_hospitals=''.join(str(hospital_zips))
+  
     result=client.command(
         "SELECT min(distance), zip_to AS hospital_zip FROM kyzipdistance WHERE zip_from = " + zip_code + " AND zip_to IN " + str_hospitals 
     )
     if bool(result[0].oRecordData):
-        return result[0].oRecordData["hospital_zip"]
+        # get number of beds left 
+        num_beds=getbeds_from_zipcode(result[0].oRecordData["hospital_zip"],client)
+        if(num_beds>0):
+            return result[0].oRecordData["hospital_zip"]
+        # recursion
+        if (len(hospital_zips) >= 2):
+            min_dist_zip=get_min_dist_hospital_zip(zip_code,hospital_zips.remove(result[0].oRecordData),client)
+        else:
+            return min_dist_zip
     return -1
 
-def get_emergency_hospital_zip(zip_code,hospital_zips,client):
-    str_hospitals=''.join(str(hospital_zips[0]))
-    result=client.command(
-        "SELECT min(distance), zip_to AS hospital_zip FROM kyzipdistance WHERE zip_from = " + zip_code + " AND zip_to IN " + str_hospitals 
-    )
-    if bool(result[0].oRecordData):
-        return result[0].oRecordData["hospital_zip"]
-    return -1
+# def get_emergency_hospital_zip(zip_code,hospital_zips,client):
+#     str_hospitals=''.join(str(hospital_zips[0]))
+#     result=client.command(
+#         "SELECT min(distance), zip_to AS hospital_zip FROM kyzipdistance WHERE zip_from = " + zip_code + " AND zip_to IN " + str_hospitals 
+#     )
+#     if bool(result[0].oRecordData):
+#         return result[0].oRecordData["hospital_zip"]
+#     return -1
 
 def get_hospital_id(hospital_zip,client):
     result=client.command(
@@ -230,8 +246,7 @@ def sub_bed(hospital_zip,client):
     client.command(
         "UPDATE Hospital INCREMENT beds = -1 WHERE zip = " + str(hospital_zip)
     )
-    #maybe build edge here? help with OF 2
-    # WHERE hospital_zip = " + str(hospital_zip)
+
 
 def getbeds(id,client):
     result=client.command(
@@ -240,6 +255,12 @@ def getbeds(id,client):
 
     return result[0].oRecordData
 
+def getbeds_from_zipcode(zipcode,client):
+    result=client.command(
+        "SELECT beds FROM Hospital WHERE zip = " + str(zipcode)
+    )
+
+    return result[0].oRecordData["beds"]
 
 #----------------------
 
